@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Tu Esencia Única Te Espera!</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Importa la tipografía 'Cormorant Garamond' de Google Fonts para el cuerpo del texto */
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap');
+        /* Importa la tipografía 'Playfair Display' para el eslogan */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            color: #d4a762; /* Color dorado principal */
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #d4a762; /* Color dorado del fondo */
+            background-image: url('https://images.unsplash.com/photo-1557171489-203a2e7c90b3?q=80&w=1974&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(44, 74, 64, 0.85); /* Overlay semitransparente para oscurecer y desenfocar el fondo */
+            backdrop-filter: blur(8px); /* Efecto de desenfocado */
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #2c4a40; /* Color verde oscuro del logo para el contenedor principal */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            text-align: center;
+            font-weight: 700;
+        }
+        h2 {
+            color: #ffffff; /* Preguntas en blanco para resaltar */
+            font-size: 2.2em;
+            margin-top: 30px;
+            border-bottom: 2px solid #d4a762; /* Línea dorada */
+            padding-bottom: 5px;
+        }
+        h3 {
+             color: #ffffff;
+        }
+        .text-intro {
+            color: #e8d7b8; /* Texto de introducción en dorado claro */
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-group {
+            display: none; /* Oculta todas las preguntas por defecto */
+        }
+        .question-group.active {
+            display: block; /* Muestra solo la pregunta activa */
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .option-card {
+            background-color: #3b5a4e; /* Fondo de las tarjetas en un tono de verde más claro */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background-color: #4f7461; /* Verde más claro en hover */
+        }
+        .option-card.selected {
+            background-color: #d4a762; /* Dorado para la selección */
+            border: 2px solid #fff;
+        }
+        .option-card h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #ffffff; /* Título de la tarjeta en blanco */
+            margin-bottom: 5px;
+        }
+        .option-card.selected h3, .option-card.selected p {
+            color: #2c4a40; /* Texto de la tarjeta seleccionada en verde oscuro */
+        }
+        .option-card p {
+            font-size: 1em;
+            text-align: center;
+            margin: 0;
+            color: #d4a762; /* Texto de la tarjeta en dorado */
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #d4a762;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+            background-color: #3b5a4e;
+            color: #e8d7b8;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #3b5a4e;
+            border: 2px dashed #d4a762;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            color: #e8d7b8;
+        }
+        .final-name {
+            font-size: 2em;
+            font-weight: bold;
+            color: #d4a762;
+            margin-bottom: 10px;
+        }
+        .code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #d4a762;
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            background-color: #d4a762;
+            color: #2c4a40;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #e8d7b8;
+            transform: translateY(-2px);
+        }
+        .slogan {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #d4a762;
+            font-family: 'Playfair Display', serif; /* Nueva tipografía para el eslogan */
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container rounded-xl">
+        <h1 class="text-4xl md:text-6xl text-d4a762 mb-2">¡Tu Esencia Única Te Espera!</h1>
+        <p class="text-intro">¡Tu esencia está a punto de cobrar vida! Acompáñanos en los últimos pasos para crear la fragancia perfecta.</p>
+
+        <form id="perfumeForm">
+            
+            <div id="q-gender" class="question-group active">
+                <h2>1. Elige tu Esencia</h2>
+                <p class="text-intro">Para comenzar, ¿qué tipo de fragancia estás buscando?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="FEM">
+                        <h3>Esencia Femenina</h3>
+                        <p>Aromas que evocan delicadeza, audacia y elegancia.</p>
+                    </div>
+                    <div class="option-card" data-value="MAS">
+                        <h3>Esencia Masculina</h3>
+                        <p>Aromas que inspiran fuerza, frescura y carácter.</p>
+                    </div>
+                    <div class="option-card" data-value="UNI">
+                        <h3>Esencia Unisex</h3>
+                        <p>Aromas versátiles que rompen barreras y se adaptan a ti.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q1" class="question-group">
+                <h2 id="q1-title">2. Tu Esencia Personal</h2>
+                <p class="text-intro">Si tu personalidad fuera una obra de arte, ¿cómo la describirías?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="audaz">
+                        <h3>Audaz y Seductor</h3>
+                        <p>Una pieza moderna y abstracta que captura la atención.</p>
+                    </div>
+                    <div class="option-card" data-value="elegante">
+                        <h3>Sofisticado y Misterioso</h3>
+                        <p>Una obra renacentista, con detalles sutiles y profundidad.</p>
+                    </div>
+                    <div class="option-card" data-value="vital">
+                        <h3>Vibrante y Energético</h3>
+                        <p>Una pintura impresionista, llena de luz y color.</p>
+                    </div>
+                    <div class="option-card" data-value="tranquilo">
+                        <h3>Relajado y Natural</h3>
+                        <p>Una acuarela de paisaje, serena y armoniosa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q2" class="question-group">
+                <h2 id="q2-title">3. El Momento</h2>
+                <p class="text-intro">Piensa en el momento en el que usarías esta fragancia. ¿Dónde dejarías tu huella?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="evento">
+                        <h3>En un Evento Especial</h3>
+                        <p>Una noche inolvidable que requiere un toque de distinción.</p>
+                    </div>
+                    <div class="option-card" data-value="diario">
+                        <h3>En tu Día a Día</h3>
+                        <p>Para sentirte con confianza en la oficina o en tu rutina.</p>
+                    </div>
+                    <div class="option-card" data-value="ambos">
+                        <h3>En Cualquier Momento</h3>
+                        <p>Una fragancia versátil que te define en cada situación.</p>
+                    </div>
+                    <div class="option-card" data-value="momentos_privados">
+                        <h3>En Momentos de Introspección</h3>
+                        <p>Un aroma personal que te acompañe en la calma.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q3" class="question-group">
+                <h2 id="q3-title">4. La Sensación</h2>
+                <p class="text-intro">Cuando apliques el perfume, ¿qué sensación quieres que te invada?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="impacto">
+                        <h3>Impacto y Poder</h3>
+                        <p>Una ola de seguridad y presencia que nadie puede ignorar.</p>
+                    </div>
+                    <div class="option-card" data-value="confort">
+                        <h3>Calidez y Confort</h3>
+                        <p>Un abrazo olfativo que te haga sentir en paz.</p>
+                    </div>
+                    <div class="option-card" data-value="frescura">
+                        <h3>Frescura y Limpieza</h3>
+                        <p>Una brisa refrescante que te revitalice al instante.</p>
+                    </div>
+                    <div class="option-card" data-value="dulzura">
+                        <h3>Dulzura y Alegría</h3>
+                        <p>Un aroma que ilumine tu día con optimismo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q4" class="question-group">
+                <h2 id="q4-title">5. El Elemento</h2>
+                <p class="text-intro">Si tu aroma fuera un elemento de la naturaleza, ¿cuál sería?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="humo">
+                        <h3>Humo y Madera</h3>
+                        <p>Un fuego crepitante en un bosque denso. (Incienso, Sándalo)</p>
+                    </div>
+                    <div class="option-card" data-value="especias">
+                        <h3>Especias y Dulces</h3>
+                        <p>El calor de una especia exótica en un postre. (Canela, Vainilla)</p>
+                    </div>
+                    <div class="option-card" data-value="citricos">
+                        <h3>Cítricos y Mar</h3>
+                        <p>Una ola refrescante en la costa soleada. (Limón, Notas marinas)</p>
+                    </div>
+                    <div class="option-card" data-value="fruta">
+                        <h3>Frutas y Piña</h3>
+                        <p>Una explosión de frutas tropicales en el verano. (Piña, Manzana)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q5" class="question-group">
+                <h2 id="q5-title">6. La Textura</h2>
+                <p class="text-intro">Imagina tu fragancia como una textura. ¿Qué sentirías al tocarla?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="suave">
+                        <h3>Suave y Aterciopelada</h3>
+                        <p>Como la piel de un durazno, una sensación delicada.</p>
+                    </div>
+                    <div class="option-card" data-value="rugosa">
+                        <h3>Rugosa y Firme</h3>
+                        <p>Como la corteza de un árbol, con fuerza y carácter.</p>
+                    </div>
+                    <div class="option-card" data-value="ligera">
+                        <h3>Ligera y Sedosa</h3>
+                        <p>Como una tela fina que fluye con el viento, sin peso.</p>
+                    </div>
+                    <div class="option-card" data-value="esponjosa">
+                        <h3>Esponjosa y Dulce</h3>
+                        <p>Como una nube de algodón de azúcar, una textura que te envuelve.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q6" class="question-group">
+                <h2 id="q6-title">7. El Color</h2>
+                <p class="text-intro">Si tu fragancia tuviera un color, ¿cuál sería?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="negro">
+                        <h3>Negro o Morado</h3>
+                        <p>Un color profundo, misterioso y elegante.</p>
+                    </div>
+                    <div class="option-card" data-value="dorado">
+                        <h3>Dorado o Ambarino</h3>
+                        <p>Un color cálido, que evoca lujo y opulencia.</p>
+                    </div>
+                    <div class="option-card" data-value="azul">
+                        <h3>Azul o Verde</h3>
+                        <p>Un color fresco que recuerda al mar y la naturaleza.</p>
+                    </div>
+                    <div class="option-card" data-value="rojo">
+                        <h3>Rojo o Naranja</h3>
+                        <p>Un color vibrante y lleno de energía.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="q8" class="question-group">
+                <h2>8. La Estación del Año</h2>
+                <p class="text-intro">¿En qué estación del año usarías esta fragancia?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="verano">
+                        <h3>Verano</h3>
+                        <p>Días soleados, playas y noches cálidas.</p>
+                    </div>
+                    <div class="option-card" data-value="todas">
+                        <h3>Cualquier Estación</h3>
+                        <p>Un aroma versátil que te acompaña todo el año.</p>
+                    </div>
+                    <div class="option-card" data-value="invierno">
+                        <h3>Invierno</h3>
+                        <p>Días fríos, nevados y la sensación de calidez en casa.</p>
+                    </div>
+                    <div class="option-card" data-value="primavera">
+                        <h3>Primavera</h3>
+                        <p>Un renacer de la naturaleza, flores y frescura.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="q9" class="question-group">
+                <h2>9. El Sabor</h2>
+                <p class="text-intro">Si tu esencia fuera un sabor, ¿cuál sería?</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="dulce">
+                        <h3>Dulce y Acogedor</h3>
+                        <p>Un postre de vainilla, caramelo o chocolate.</p>
+                    </div>
+                    <div class="option-card" data-value="picante">
+                        <h3>Picante y Exótico</h3>
+                        <p>El sabor de un plato con especias de oriente.</p>
+                    </div>
+                    <div class="option-card" data-value="citrico">
+                        <h3>Cítrico y Refrescante</h3>
+                        <p>Una limonada o el sabor de la naranja fresca.</p>
+                    </div>
+                    <div class="option-card" data-value="amargo">
+                        <h3>Amargo y Profundo</h3>
+                        <p>El sabor de un café oscuro o un chocolate amargo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q10" class="question-group">
+                <h2>10. Notas de Salida</h2>
+                <p class="text-intro">¿Qué aromas quieres sentir primero? Las notas de salida son la primera impresión de la fragancia.</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="sal_frescas">
+                        <h3>Frescas</h3>
+                        <p>Bergamota, limón, menta.</p>
+                    </div>
+                    <div class="option-card" data-value="sal_dulces">
+                        <h3>Dulces</h3>
+                        <p>Frutas confitadas, caramelo, algodón de azúcar.</p>
+                    </div>
+                    <div class="option-card" data-value="sal_frutales">
+                        <h3>Frutales</h3>
+                        <p>Piña, manzana, frutos rojos.</p>
+                    </div>
+                    <div class="option-card" data-value="sal_verdes">
+                        <h3>Verdes</h3>
+                        <p>Hojas de higo, gálbano, hierbas frescas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q11" class="question-group">
+                <h2>11. Notas de Corazón</h2>
+                <p class="text-intro">¿Qué aromas quieres que definan tu esencia? Son el alma del perfume.</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="cor_frescos">
+                        <h3>Frescas y Florales</h3>
+                        <p>Jazmín, rosa, lavanda.</p>
+                    </div>
+                    <div class="option-card" data-value="cor_amaderadas">
+                        <h3>Amaderadas</h3>
+                        <p>Sándalo, cedro, pachulí.</p>
+                    </div>
+                    <div class="option-card" data-value="cor_dulces">
+                        <h3>Aromas Dulces</h3>
+                        <p>Notas de postre como café, chocolate o licor.</p>
+                    </div>
+                    <div class="option-card" data-value="cor_acuaticas">
+                        <h3>Acuáticas</h3>
+                        <p>Notas marinas, lirio de agua.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q12" class="question-group">
+                <h2>12. Notas de Fondo</h2>
+                <p class="text-intro">¿Qué aromas quieres que perduren? Son la base del perfume y su memoria.</p>
+                <div class="options-grid">
+                    <div class="option-card" data-value="fon_orientales">
+                        <h3>Orientales</h3>
+                        <p>Ámbar, vainilla, haba tonka.</p>
+                    </div>
+                    <div class="option-card" data-value="fon_atalcadas">
+                        <h3>Atalcadas y Limpias</h3>
+                        <p>Sensación suave y empolvada, como el iris o un velo de seda.</p>
+                    </div>
+                    <div class="option-card" data-value="fon_cuero">
+                        <h3>Cuero y Resinas</h3>
+                        <p>Cuero, incienso, benjuí.</p>
+                    </div>
+                    <div class="option-card" data-value="fon_gourmand">
+                        <h3>Gourmand</h3>
+                        <p>Caramelo, chocolate, miel.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="q13" class="question-group">
+                <h2>13. El Toque Final</h2>
+                <p class="text-intro">¿Qué nombre te gustaría darle a tu esencia única?</p>
+                <input type="text" id="customName" placeholder="Ej. 'COESSENS Invictus'" class="rounded-lg">
+            </div>
+
+            <div class="buttons-container">
+                <button type="button" id="prevButton" style="display: none;">Anterior</button>
+                <button type="button" id="nextButton">Siguiente</button>
+                <button type="button" id="generateButton" style="display: none;">Crear Mi Esencia</button>
+            </div>
+        </form>
+
+        <div id="result" class="rounded-lg">
+            <h3>¡La esencia que te define ya está en camino!</h3>
+            <p id="finalName" class="final-name"></p>
+            <p>Este es el código personalizado que creamos para ti. Muéstralo en el mostrador para que te preparemos tu loción.</p>
+            <div class="code" id="finalCode"></div>
+            <p class="text-intro mt-4">Toma una captura de pantalla y envíala a nuestro medio de contacto.</p>
+            
+            <div class="slogan">
+                COESSENS el arte de crear memorias en cada aroma
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const questions = document.querySelectorAll('.question-group');
+            const nextButton = document.getElementById('nextButton');
+            const prevButton = document.getElementById('prevButton');
+            const generateButton = document.getElementById('generateButton');
+            const resultDiv = document.getElementById('result');
+            const finalCodeDiv = document.getElementById('finalCode');
+            const finalNameDiv = document.getElementById('finalName');
+            const customNameInput = document.getElementById('customName');
+            let currentQuestionIndex = 0;
+            let answers = {};
+
+            const updateUI = () => {
+                questions.forEach((q, index) => {
+                    q.classList.toggle('active', index === currentQuestionIndex);
+                });
+
+                prevButton.style.display = (currentQuestionIndex === 0) ? 'none' : 'inline-block';
+                nextButton.style.display = (currentQuestionIndex === questions.length - 1) ? 'none' : 'inline-block';
+                generateButton.style.display = (currentQuestionIndex === questions.length - 1) ? 'inline-block' : 'none';
+            };
+
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const currentQuestion = questions[currentQuestionIndex];
+                    currentQuestion.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    
+                    const value = card.getAttribute('data-value');
+                    answers[currentQuestion.id] = value;
+                });
+            });
+
+            nextButton.addEventListener('click', () => {
+                const currentQuestion = questions[currentQuestionIndex];
+                if (!answers[currentQuestion.id]) {
+                    const introText = currentQuestion.querySelector('.text-intro');
+                    const originalText = introText.textContent;
+                    introText.textContent = 'Por favor, selecciona una opción para continuar.';
+                    introText.style.color = '#ff6b6b';
+                    setTimeout(() => {
+                        introText.textContent = originalText;
+                        introText.style.color = '#e8d7b8';
+                    }, 2000);
+                    return;
+                }
+                
+                currentQuestionIndex++;
+                updateUI();
+            });
+
+            prevButton.addEventListener('click', () => {
+                if(currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    updateUI();
+                }
+            });
+            
+            generateButton.addEventListener('click', () => {
+                const customName = customNameInput.value.trim() || "Esencia Única";
+                
+                const genero = answers['q-gender'];
+                const personalidad = answers['q1'];
+                const ocasion = answers['q2'];
+                const sensacion = answers['q3'];
+                const elemento = answers['q4'];
+                const textura = answers['q5'];
+                const color = answers['q6'];
+                const estacion = answers['q8']; // Saltamos q7
+                const sabor = answers['q9'];
+                const notas_salida = answers['q10'];
+                const notas_corazon = answers['q11'];
+                const notas_fondo = answers['q12'];
+
+                const code = `${genero}-${personalidad.substring(0, 3).toUpperCase()}-${ocasion.substring(0, 3).toUpperCase()}-${sensacion.substring(0, 3).toUpperCase()}-${elemento.substring(0, 3).toUpperCase()}-${textura.substring(0, 3).toUpperCase()}-${color.substring(0, 3).toUpperCase()}-${estacion.substring(0, 3).toUpperCase()}-${sabor.substring(0, 3).toUpperCase()}-${notas_salida.substring(0, 3).toUpperCase()}-${notas_corazon.substring(0, 3).toUpperCase()}-${notas_fondo.substring(0, 3).toUpperCase()}`;
+                
+                finalNameDiv.textContent = customName;
+                finalCodeDiv.textContent = code;
+                
+                document.getElementById('perfumeForm').style.display = 'none';
+                resultDiv.style.display = 'block';
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
